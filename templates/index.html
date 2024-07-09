@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>News Sentiment Analysis</h1>
+    <form action="/results" method="post">
+        <label for="api_key">API Key:</label>
+        <input type="text" id="api_key" name="api_key" required><br><br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required><br><br>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required><br><br>
+        <label for="news_source">News Source (optional):</label>
+        <input type="text" id="news_source" name="news_source"><br><br>
+        <label for="subject">Subject (optional):</label>
+        <input type="text" id="subject" name="subject"><br><br>
+        <input type="submit" value="Analyze">
+    </form>
+</body>
+</html>
