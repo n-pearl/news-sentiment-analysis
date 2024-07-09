@@ -3,6 +3,7 @@ import pulls
 import plotly
 import plotly.express as px
 import json
+import os
 
 app = Flask(__name__)
 
@@ -29,4 +30,4 @@ def results():
     return render_template('results.html', tables=[sentiment_df.to_html(classes='data')], titles=sentiment_df.columns.values, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port= int(os.environ.get('PORT', 5000)))
