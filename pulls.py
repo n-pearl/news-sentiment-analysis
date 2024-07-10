@@ -5,7 +5,7 @@ from textblob import TextBlob
 import plotly.express as px
 
 # Function to fetch news articles
-def fetch_news(start_date, end_date, api_key = '85adbb0a35d14bd1b7ae7b4876fc8af2', news_source = None, subject = None):
+def fetch_news(api_key, start_date, end_date, news_source = None, subject = None):
     url = "https://newsapi.org/v2/everything"
     query = subject if subject else ""
     params = {
@@ -35,8 +35,8 @@ def analyze_sentiments(articles):
         description = article.get('description')
         if content and published_at:
             analysis = TextBlob(content)
-            polarity = analysis.sentiment.polarity
-            subjectivity = analysis.sentiment.subjectivity
+            polarity = analysis.sentiment.polarity #type: ignore
+            subjectivity = analysis.sentiment.subjectivity #type: ignore
             data.append({
                 'title': title,
                 'published_at': published_at,
@@ -74,12 +74,13 @@ def print_articles(df):
             print(f"Published At: {article['published_at']}")
 
 # Example usage
-if __name__ == "__main__":
-    START_DATE = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
-    END_DATE = datetime.now().strftime('%Y-%m-%d')
-    NEWS_SOURCE = 'cnn'  # Example: 'cnn', 'bbc-news', etc.
-    SUBJECT = 'tesla'
-    
-    articles = fetch_news(START_DATE, END_DATE, NEWS_SOURCE, SUBJECT)
-    sentiment_df = analyze_sentiments(articles)
-    print_articles(sentiment_df)
+#if __name__ == "__main__":
+#    START_DATE = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+#    END_DATE = datetime.now().strftime('%Y-%m-%d')
+#    NEWS_SOURCE = 'cnn'  # Example: 'cnn', 'bbc-news', etc.
+#    SUBJECT = 'tesla'
+#    key = ''
+#    
+#    articles = fetch_news(START_DATE, END_DATE, key, NEWS_SOURCE, SUBJECT)
+#    sentiment_df = analyze_sentiments(articles)
+#    print_articles(sentiment_df)
