@@ -16,8 +16,8 @@
     <script>
         var graphPolarity = { graph_polarity, tojson, safe }; 
         var graphSubjectivity = { graph_subjectivity, tojson, safe };
-        Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout);
-        Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout);
+        Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
+        Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
     </script>    
 </body>
 </html>

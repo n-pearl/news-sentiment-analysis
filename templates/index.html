@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>News Sentiment Analysis</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <h1>News Sentiment Analysis</h1>
@@ -16,7 +17,7 @@
         <input type="date" id="end_date" name="end_date" required><br><br>
         <label for="news_source">News Source (optional):</label>
         <input type="text" id="news_source" name="news_source"><br><br>
-        <label for="subject">Subject (optional):</label>
+        <label for="subject">Subject:</label>
         <input type="text" id="subject" name="subject"><br><br>
         <input type="submit" value="Analyze">
     </form>
