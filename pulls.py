@@ -17,7 +17,7 @@ def fetch_news(api_key, start_date, end_date, news_source=None, subject=None):
         
         response = requests.get(url)
         response.raise_for_status()
-        articles = response.json()
+        articles = response.json().get('articles', [])
         logger.info("Articles fetched successfully")
         return articles
     except requests.exceptions.RequestException as e:
@@ -34,10 +34,12 @@ def analyze_sentiments(articles):
             title = article.get('title', 'No Title')
             link = article.get('url')
             description = article.get('description')
+
             if content and published_at:
                 analysis = TextBlob(content)
                 polarity = analysis.sentiment.polarity #type: ignore
                 subjectivity = analysis.sentiment.subjectivity #type: ignore
+
                 data.append({
                     'title': title,
                     'published_at': published_at,
@@ -46,18 +48,20 @@ def analyze_sentiments(articles):
                     'polarity': polarity,
                     'subjectivity': subjectivity
                 })
-                logger.info('Sentiment analysis performed successfully')
+
+        logger.info('Sentiment analysis performed successfully')
+        
+        if data:
+            df = pd.DataFrame(data)
+            df['published_at'] = pd.to_datetime(df['published_at'])
+            return df
+        else:
+            print("No valid articles found")
+            return pd.DataFrame()
+        
     except Exception as e:
         logger.error(f"Error during sentiment analysis: {e}")
         raise
-    
-    if data:
-        df = pd.DataFrame(data)
-        df['published_at'] = pd.to_datetime(df['published_at'])
-        return df
-    else:
-        print("No valid articles found")
-        return pd.DataFrame()
     
 
 def generate_graphs(df):

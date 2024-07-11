@@ -7,6 +7,7 @@ import json
 import os
 
 app = Flask(__name__)
+app.secret_key = 'cookies'
 
 logging.basicConfig(
     filename='app.log',
@@ -19,9 +20,11 @@ logger = logging.getLogger(__name__)
 @app.route('/')
 def index():
     logger.info('Rendering index page')
+    url = url_for('index')
+    print(f'The url for this page is: {url}')
     return render_template('index.html')
 
-@app.route('/results', methods=['POST'])
+@app.route('/results', methods=['GET', 'POST'])
 def results():
     try:
         api_key = request.form['api_key']
