@@ -50,7 +50,7 @@ def analyze_sentiments(articles):
                 })
 
         logger.info('Sentiment analysis performed successfully')
-        
+
         if data:
             df = pd.DataFrame(data)
             df['published_at'] = pd.to_datetime(df['published_at'])
@@ -68,7 +68,6 @@ def generate_graphs(df):
     fig_polarity = px.line(df, x='published_at', y='polarity', title='Polarity Over Time')
     fig_subjectivity = px.line(df, x='published_at', y='subjectivity', title='Subjectivity Over Time')
     return fig_polarity, fig_subjectivity
-
 
 def print_articles(df):
     if df.empty:

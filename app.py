@@ -11,7 +11,7 @@ app.secret_key = 'cookies'
 
 logging.basicConfig(
     filename='app.log',
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
@@ -38,12 +38,14 @@ def results():
         articles = pulls.fetch_news(api_key, start_date, end_date, news_source, subject)
         sentiment_df = pulls.analyze_sentiments(articles)
         
-        fig_polarity, fig_subjectivity = pulls.generate_graphs(sentiment_df)
+        graph_polarity = px.scatter(sentiment_df, x = 'published_at', y = 'polarity', title = 'Polarity Over Time')
+        graph_subjectivity = px.scatter(sentiment_df, x = 'published_at', y = 'subjectivity', title = 'Subjectivity Over Time')
+
+        tables = sentiment_df.to_html(classes = 'table table-striped')
+
+        logger.info("Rendering results page")
         
-        graph_polarity = json.dumps(fig_polarity, cls=plotly.utils.PlotlyJSONEncoder)
-        graph_subjectivity = json.dumps(fig_subjectivity, cls=plotly.utils.PlotlyJSONEncoder)
-        
-        return render_template('results.html', tables=[sentiment_df.to_html(classes='data')], titles=sentiment_df.columns.values, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
+        return render_template('results.html', tables=tables, titles=sentiment_df.columns.values, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
     except Exception as e:
         logger.error(f"Error processing request: {e}")
         flash(str(e))
