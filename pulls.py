@@ -1,82 +1,64 @@
+from flask import redirect, url_for, flash
 import requests
-import logging
-import pandas as pd
-from datetime import datetime, timedelta
+import plotly.graph_objs as go
 from textblob import TextBlob
-import plotly.express as px
+from markupsafe import Markup
+import logging
 
+# Set up logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
-def fetch_news(api_key, start_date, end_date, news_source=None, subject=None):
-    logger.info(f"Fetching news data from {start_date} to {end_date} for source: {news_source} and subject: {subject}")
+def get_news(api_key, start_date, end_date, news_source, subject):
     try:
-        url = f"https://newsapi.org/v2/everything?q={subject}&from={start_date}&to={end_date}&apiKey={api_key}"
-        if news_source:
-            url += f"&sources={news_source}"
-        
-        response = requests.get(url)
+        url = 'https://newsapi.org/v2/everything'
+        params = {
+            'q': subject,
+            'from': start_date,
+            'to': end_date,
+            'apiKey': api_key,
+            'language': 'en',
+            'sources': news_source if news_source else None
+        }
+        response = requests.get(url, params=params)
         response.raise_for_status()
         articles = response.json().get('articles', [])
-        logger.info("Articles fetched successfully")
         return articles
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error fetching data: {e}")
-        raise
-
-
-def analyze_sentiments(articles):
-    try:
-        data = []
-        for article in articles:
-            published_at = article.get('publishedAt')
-            content = article.get('content')
-            title = article.get('title', 'No Title')
-            link = article.get('url')
-            description = article.get('description')
-
-            if content and published_at:
-                analysis = TextBlob(content)
-                polarity = analysis.sentiment.polarity #type: ignore
-                subjectivity = analysis.sentiment.subjectivity #type: ignore
-
-                data.append({
-                    'title': title,
-                    'published_at': published_at,
-                    'link': link,
-                    'description': description,
-                    'polarity': polarity,
-                    'subjectivity': subjectivity
-                })
-
-        logger.info('Sentiment analysis performed successfully')
-
-        if data:
-            df = pd.DataFrame(data)
-            df['published_at'] = pd.to_datetime(df['published_at'])
-            return df
-        else:
-            print("No valid articles found")
-            return pd.DataFrame()
-        
     except Exception as e:
-        logger.error(f"Error during sentiment analysis: {e}")
-        raise
-    
+        logger.error(f"Error processing request: {e}")
+        flash(str(e))
+        return redirect(url_for('index'))
 
-def generate_graphs(df):
-    fig_polarity = px.line(df, x='published_at', y='polarity', title='Polarity Over Time')
-    fig_subjectivity = px.line(df, x='published_at', y='subjectivity', title='Subjectivity Over Time')
-    return fig_polarity, fig_subjectivity
+def analyze_sentiment(articles):
+    logging.info('Starting sentiment analysis')
+    polarity = []
+    subjectivity = []
+    rows = []
+    for article in articles:
+        text = article.get('content')
+        if text:
+            logging.debug(f'Analyzing article: {article["title"]}')
+            blob = TextBlob(text)
+            polarity.append(blob.polarity)
+            subjectivity.append(blob.subjectivity)
+            rows.append(f"<tr><td>{article['title']}</td><td>{blob.polarity}</td><td>{blob.subjectivity}</td></tr>")
+        else:
+            logging.warning(f'No content found for article: {article["title"]}')
 
-def print_articles(df):
-    if df.empty:
-        print("No data to display")
-    else:
-        print("\nNews Articles with Sentiment Analysis:")
-        for index, article in df.iterrows():
-            print(f"\nTitle: {article['title']}")
-            print(f"Link: {article['link']}")
-            print(f"Polarity: {article['polarity']}, Subjectivity: {article['subjectivity']}")
-            print(f"Description: {article['description']}")
-            print(f"Published At: {article['published_at']}")
+    if not polarity:
+        logging.info('No valid articles found, setting default values')
+        polarity = [0]
+        subjectivity = [0]
+
+    polarity_graph = {
+        'data': [go.Scatter(x=list(range(len(polarity))), y=polarity, mode='lines')],
+        'layout': {'title': 'Polarity Over Time'}
+    }
+    subjectivity_graph = {
+        'data': [go.Scatter(x=list(range(len(subjectivity))), y=subjectivity, mode='lines')],
+        'layout': {'title': 'Subjectivity Over Time'}
+    }
+
+    table_html = Markup(f"<table><tr><th>Title</th><th>Polarity</th><th>Subjectivity</th></tr>{''.join(rows)}</table>")
+    logging.info('Completed sentiment analysis')
+    return table_html, polarity_graph, subjectivity_graph

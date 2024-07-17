@@ -7,7 +7,7 @@ import json
 import os
 
 app = Flask(__name__)
-app.secret_key = 'cookies'
+app.secret_key = 'supersecretkey'
 
 logging.basicConfig(
     filename='app.log',
@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 @app.route('/')
 def index():
     logger.info('Rendering index page')
-    url = url_for('index')
-    print(f'The url for this page is: {url}')
     return render_template('index.html')
 
 @app.route('/results', methods=['GET', 'POST'])
@@ -35,17 +33,12 @@ def results():
 
         logger.info(f"Received request with API key: {api_key}, start date: {start_date}, end date: {end_date}, news source: {news_source}, subject: {subject}")
         
-        articles = pulls.fetch_news(api_key, start_date, end_date, news_source, subject)
-        sentiment_df = pulls.analyze_sentiments(articles)
-        
-        graph_polarity = px.scatter(sentiment_df, x = 'published_at', y = 'polarity', title = 'Polarity Over Time')
-        graph_subjectivity = px.scatter(sentiment_df, x = 'published_at', y = 'subjectivity', title = 'Subjectivity Over Time')
-
-        tables = sentiment_df.to_html(classes = 'table table-striped')
+        articles = pulls.get_news(api_key, start_date, end_date, news_source, subject) 
+        tables, graph_polarity, graph_subjectivity = pulls.analyze_sentiment(articles)
 
         logger.info("Rendering results page")
         
-        return render_template('results.html', tables=tables, titles=sentiment_df.columns.values, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
+        return render_template('results.html', tables=tables, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
     except Exception as e:
         logger.error(f"Error processing request: {e}")
         flash(str(e))

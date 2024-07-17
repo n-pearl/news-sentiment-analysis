@@ -14,10 +14,20 @@
     <div id="polarity-graph" style="width:100%;height:400px;"></div>
     <div id="subjectivity-graph" style="width:100%;height:400px;"></div>
     <script>
-        var graphPolarity = { graph_polarity, tojson, safe }; 
-        var graphSubjectivity = { graph_subjectivity, tojson, safe };
-        Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
-        Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
-    </script>    
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            var graphPolarity = JSON.parse('{{ graph_polarity | tojson | safe }}');
+            var graphSubjectivity = JSON.parse('{{ graph_subjectivity | tojson | safe }}');
+            Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
+            Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
+        });
+    </script>
+        
 </body>
 </html>

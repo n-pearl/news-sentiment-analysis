@@ -1763,3 +1763,51 @@
 2024-07-11 23:17:26,141 - werkzeug - WARNING -  * Debugger is active!
 2024-07-11 23:17:26,160 - werkzeug - INFO -  * Debugger PIN: 170-713-238
 2024-07-11 23:17:26,186 - werkzeug - INFO -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+2024-07-12 18:22:30,752 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.237.211:5000
+2024-07-12 18:22:30,752 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-12 18:22:30,786 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2024-07-12 18:22:33,948 - werkzeug - WARNING -  * Debugger is active!
+2024-07-12 18:22:33,954 - werkzeug - INFO -  * Debugger PIN: 112-462-260
+2024-07-12 18:22:51,635 - __main__ - INFO - Rendering index page
+2024-07-12 18:22:51,812 - werkzeug - INFO -  * Detected change in 'C:\\Users\\noahp\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jinja2\\filters.py', reloading
+2024-07-12 18:22:51,845 - werkzeug - INFO -  * Detected change in 'C:\\Users\\noahp\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask\\json\\provider.py', reloading
+2024-07-12 18:22:51,910 - werkzeug - INFO -  * Detected change in 'C:\\Users\\noahp\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\__init__.py', reloading
+2024-07-12 18:22:51,925 - werkzeug - INFO -  * Detected change in 'C:\\Users\\noahp\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\encoder.py', reloading
+2024-07-12 18:22:51,954 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:22:51] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-07-12 18:22:52,727 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2024-07-12 18:22:57,047 - werkzeug - WARNING -  * Debugger is active!
+2024-07-12 18:22:57,051 - werkzeug - INFO -  * Debugger PIN: 112-462-260
+2024-07-12 18:22:57,150 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:22:57] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2024-07-12 18:23:00,122 - __main__ - INFO - Rendering index page
+2024-07-12 18:23:00,144 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:00] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-07-12 18:23:00,207 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:00] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2024-07-12 18:23:00,207 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:00] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2024-07-12 18:23:00,293 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:00] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-07-12 18:23:00,321 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:00] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-07-12 18:23:19,842 - __main__ - INFO - Rendering index page
+2024-07-12 18:23:19,857 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:19] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-07-12 18:23:20,108 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:20] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2024-07-12 18:23:20,260 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:20] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2024-07-12 18:23:20,306 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:20] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2024-07-12 18:23:20,642 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:20] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-07-12 18:23:45,355 - __main__ - INFO - Rendering index page
+2024-07-12 18:23:45,369 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:45] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-07-12 18:23:45,694 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:45] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2024-07-12 18:23:45,696 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:45] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2024-07-12 18:23:45,963 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:23:45] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-07-12 18:33:25,673 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.237.211:5000
+2024-07-12 18:33:25,673 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2024-07-12 18:33:25,678 - werkzeug - INFO -  * Restarting with watchdog (windowsapi)
+2024-07-12 18:33:28,712 - werkzeug - WARNING -  * Debugger is active!
+2024-07-12 18:33:28,712 - werkzeug - INFO -  * Debugger PIN: 112-462-260
+2024-07-12 18:33:34,339 - __main__ - INFO - Rendering index page
+2024-07-12 18:33:34,400 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:33:34] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-07-12 18:33:34,662 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:33:34] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2024-07-12 18:33:34,742 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:33:34] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2024-07-12 18:33:34,786 - werkzeug - INFO - 127.0.0.1 - - [12/Jul/2024 18:33:34] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
