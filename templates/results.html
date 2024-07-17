@@ -5,14 +5,23 @@
     <title>Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Sentiment Analysis Results</h1>
-    <div>
-        {{ tables | safe }}
+    <div class="container">
+        <h1>Sentiment Analysis Results</h1>
+        <div class="tab-buttons">
+            <button onclick="showTab('table-tab')">Table</button>
+            <button onclick="showTab('graphs-tab')">Graphs</button>
+        </div>
+        <div id="table-tab" class="tab active">
+            {{ tables | safe }}
+        </div>
+        <div id="graphs-tab" class="tab">
+            <div id="polarity-graph" style="width:100%;height:400px;"></div>
+            <div id="subjectivity-graph" style="width:100%;height:400px;"></div>
+        </div>
     </div>
-    <div id="polarity-graph" style="width:100%;height:400px;"></div>
-    <div id="subjectivity-graph" style="width:100%;height:400px;"></div>
     <script>
         function showTab(tabId) {
             document.querySelectorAll('.tab').forEach(tab => {
@@ -20,14 +29,19 @@
             });
             document.getElementById(tabId).classList.add('active');
         }
-    
+
         document.addEventListener('DOMContentLoaded', function() {
-            var graphPolarity = JSON.parse('{{ graph_polarity | tojson | safe }}');
-            var graphSubjectivity = JSON.parse('{{ graph_subjectivity | tojson | safe }}');
-            Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
-            Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
+            try {
+                var graphPolarity = JSON.parse('{{ graph_polarity | safe }}');
+                var graphSubjectivity = JSON.parse('{{ graph_subjectivity | safe }}');
+                console.log(graphPolarity);
+                console.log(graphSubjectivity);
+                Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
+                Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
+            } catch (e) {
+                console.error("Error parsing graph data:", e);
+            }
         });
-    </script>
-        
+    </script>    
 </body>
 </html>

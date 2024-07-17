@@ -1,4 +1,6 @@
+import json
 from flask import redirect, url_for, flash
+import plotly
 import requests
 import plotly.graph_objs as go
 from textblob import TextBlob
@@ -45,7 +47,7 @@ def analyze_sentiment(articles):
         else:
             logging.warning(f'No content found for article: {article["title"]}')
 
-    if not polarity:
+    if not polarity:  # Ensure there's at least one data point
         logging.info('No valid articles found, setting default values')
         polarity = [0]
         subjectivity = [0]
@@ -59,6 +61,12 @@ def analyze_sentiment(articles):
         'layout': {'title': 'Subjectivity Over Time'}
     }
 
+    # Serialize Plotly graph objects
+    polarity_graph_json = json.dumps(polarity_graph, cls=plotly.utils.PlotlyJSONEncoder)
+    subjectivity_graph_json = json.dumps(subjectivity_graph, cls=plotly.utils.PlotlyJSONEncoder)
+
     table_html = Markup(f"<table><tr><th>Title</th><th>Polarity</th><th>Subjectivity</th></tr>{''.join(rows)}</table>")
     logging.info('Completed sentiment analysis')
-    return table_html, polarity_graph, subjectivity_graph
+    logging.debug(f"Polarity Graph JSON: {polarity_graph_json}")
+    logging.debug(f"Subjectivity Graph JSON: {subjectivity_graph_json}")
+    return table_html, polarity_graph_json, subjectivity_graph_json
