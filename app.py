@@ -34,7 +34,8 @@ def results():
         articles = pulls.get_news(api_key, start_date, end_date, news_source, subject)
         if not articles:
             raise ValueError("No articles found for the given parameters.")
-        tables, graph_polarity, graph_subjectivity = pulls.analyze_sentiment(articles)
+        graph_polarity, graph_subjectivity, polarity, subjectivity = pulls.analyze_sentiment(articles)
+        tables = pulls.generate_tables(articles, polarity, subjectivity)
         logger.info("Rendering results page")
         return render_template('results.html', tables=tables, graph_polarity=graph_polarity, graph_subjectivity=graph_subjectivity)
     except Exception as e:
