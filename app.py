@@ -30,7 +30,7 @@ def results():
     subject = request.form['subject']
     
     try:
-        logger.info(f"Received request with API key: {api_key}, start date: {start_date}, end date: {end_date}, news source: {news_source}, subject: {subject}")
+        logger.info(f"Received request with API key, start date: {start_date}, end date: {end_date}, news source: {news_source}, subject: {subject}")
         articles = pulls.get_news(api_key, start_date, end_date, news_source, subject)
         if not articles:
             raise ValueError("No articles found for the given parameters.")
