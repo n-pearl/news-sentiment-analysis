@@ -1,18 +1,16 @@
 {
-  "name": "news-sentiment-analysis-main",
+  "name": "news-sentiment-analysis",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
+    "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "mongoose": "^8.5.1"
+    "mongoose": "^5.13.22",
+    "sentiment": "^5.0.2"
   }
 }
