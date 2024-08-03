@@ -4,19 +4,19 @@ const router = express.Router();
 const { getNewsData } = require('../pulls');
 
 router.post('/', async (req, res) => {
-    const { api_key, start_date, end_date, news_source, subject } = req.body;
+    const { start_date, end_date, news_source, subject } = req.body;
 
-    const newsData = await getNewsData(api_key, start_date, end_date, news_source, subject);
+    const newsData = await getNewsData(start_date, end_date, news_source, subject);
     
     if (!newsData) {
         return res.status(500).send("Error fetching news data");
     }
 
-    // Prepare graph data
+    // Prepare graph data for Polarity
     const graphPolarity = {
         data: [
             {
-                x: newsData.map(article => article.date),
+                x: newsData.map(article => new Date(article.date)),
                 y: newsData.map(article => article.polarity),
                 type: 'scatter'
             }
@@ -26,26 +26,24 @@ router.post('/', async (req, res) => {
         }
     };
 
-    const graphSubjectivity = {
+    // Prepare graph data for AvgPolarityPerWord
+    const graphAvgPolarityPerWord = {
         data: [
             {
-                x: newsData.map(article => article.date),
-                y: newsData.map(article => article.subjectivity),
+                x: newsData.map(article => new Date(article.date)),
+                y: newsData.map(article => article.AvgPolarityPerWord),
                 type: 'scatter'
             }
         ],
         layout: {
-            title: 'Subjectivity over Time'
+            title: 'AvgPolarityPerWord over Time'
         }
     };
-
-    console.log('Graph Polarity:', JSON.stringify(graphPolarity)); // Debugging log
-    console.log('Graph Subjectivity:', JSON.stringify(graphSubjectivity)); // Debugging log
 
     res.render('results', {
         tables: newsData,
         graphPolarity: JSON.stringify(graphPolarity),
-        graphSubjectivity: JSON.stringify(graphSubjectivity)
+        graphAvgPolarityPerWord: JSON.stringify(graphAvgPolarityPerWord)
     });
 });
 

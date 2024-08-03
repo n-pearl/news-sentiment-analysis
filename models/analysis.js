@@ -8,7 +8,7 @@ const AnalysisSchema = new mongoose.Schema({
     news_source: String,
     subject: String,
     polarity: Number,
-    subjectivity: Number
+    AvgPolarityPerWord: Number
 });
 
 module.exports = mongoose.model('Analysis', AnalysisSchema);

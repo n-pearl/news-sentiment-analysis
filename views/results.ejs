@@ -9,12 +9,26 @@
     <style>
         th {
             cursor: pointer;
+            text-align: left;
+            padding: 10px;
+            position: relative;
+        }
+        th.sorted-asc::after, th.sorted-desc::after {
+            margin-left: 5px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         th.sorted-asc::after {
-            content: " ▲";
+            content: "▲";
         }
         th.sorted-desc::after {
-            content: " ▼";
+            content: "▼";
+        }
+        td {
+            padding: 10px;
+            text-align: left;
         }
         .container {
             max-width: 1000px;
@@ -24,14 +38,53 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .tab-buttons button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .tab-buttons button.active {
+            background-color: #0056b3;
+        }
+        .tab {
+            display: none;
+        }
+        .tab.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        th.sortable.sorted {
+            padding-right: 30px; /* Increase padding when sorted to accommodate arrow */
+        }
     </style>    
 </head>
 <body>
     <div class="container">
         <h1>Sentiment Analysis Results</h1>
         <div class="tab-buttons">
-            <button onclick="showTab('table-tab')">Table</button>
-            <button onclick="showTab('graphs-tab')">Graphs</button>
+            <button onclick="showTab('table-tab')" id="table-tab-btn" class="active">Table</button>
+            <button onclick="showTab('graphs-tab')" id="graphs-tab-btn">Graphs</button>
         </div>
         <div id="table-tab" class="tab active">
             <table id="articles-table">
@@ -39,17 +92,17 @@
                     <tr>
                         <th>Date</th>
                         <th>Title</th>
-                        <th>Polarity</th>
-                        <th>Subjectivity</th>
+                        <th class="sortable">Polarity</th>
+                        <th class="sortable">AvgPolarityPerWord</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% tables.forEach(function(article) { %>
                         <tr>
-                            <td><%= article.date %></td>
+                            <td><%= new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></td>
                             <td><%= article.title %></td>
                             <td><%= article.polarity %></td>
-                            <td><%= article.subjectivity %></td>
+                            <td><%= article.AvgPolarityPerWord.toFixed(2) %></td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -57,15 +110,22 @@
         </div>
         <div id="graphs-tab" class="tab">
             <div id="polarity-graph" style="width:100%;height:400px;"></div>
-            <div id="subjectivity-graph" style="width:100%;height:400px;"></div>
+            <div id="AvgPolarityPerWord-graph" style="width:100%;height:400px;"></div>
         </div>
     </div>
     <script>
+        const graphPolarity = JSON.parse('<%- graphPolarity %>');
+        const graphAvgPolarityPerWord = JSON.parse('<%- graphAvgPolarityPerWord %>');
+
         function showTab(tabId) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
+            document.querySelectorAll('.tab-buttons button').forEach(button => {
+                button.classList.remove('active');
+            });
             document.getElementById(tabId).classList.add('active');
+            document.getElementById(tabId + '-btn').classList.add('active');
 
             // Load graphs when the graphs tab is shown
             if (tabId === 'graphs-tab') {
@@ -74,74 +134,62 @@
         }
 
         function loadGraphs() {
-            console.log('Loading graphs...'); // Debugging log
             try {
-                /*var graphPolarityString = '<%- JSON.stringify(graphPolarity) %>';
-                var graphSubjectivityString = '<%- JSON.stringify(graphSubjectivity) %>';*/
-                
-                var graphPolarity = JSON.parse('{graphPolarity}');
-                var graphSubjectivity = JSON.parse('{graphSubjectivity}');
-                console.log('Graph Polarity:', graphPolarity); // Debugging log
-                console.log('Graph Subjectivity:', graphSubjectivity); // Debugging log
-                
                 Plotly.newPlot('polarity-graph', graphPolarity.data, graphPolarity.layout, {responsive: true});
-                Plotly.newPlot('subjectivity-graph', graphSubjectivity.data, graphSubjectivity.layout, {responsive: true});
+                Plotly.newPlot('AvgPolarityPerWord-graph', graphAvgPolarityPerWord.data, graphAvgPolarityPerWord.layout, {responsive: true});
             } catch (e) {
                 console.error("Error parsing graph data:", e);
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Sorting functionality for Polarity and Subjectivity
+            // Sorting functionality for Polarity and AvgPolarityPerWord
             const originalRows = Array.from(document.querySelectorAll('#articles-table tbody tr'));
-            const headers = document.querySelectorAll('#articles-table th');
-            const sortableHeaders = ['Polarity', 'Subjectivity'];
+            const headers = document.querySelectorAll('#articles-table th.sortable');
             headers.forEach(header => {
-                if (sortableHeaders.includes(header.innerText)) {
-                    header.addEventListener('click', function() {
-                        const table = header.closest('table');
-                        const tbody = table.querySelector('tbody');
-                        const index = Array.prototype.indexOf.call(header.parentElement.children, header);
-                        const currentOrder = header.dataset.order || 0;
-                        const order = (parseInt(currentOrder) + 1) % 3;
-                        header.dataset.order = order;
+                header.addEventListener('click', function() {
+                    const table = header.closest('table');
+                    const tbody = table.querySelector('tbody');
+                    const index = Array.prototype.indexOf.call(header.parentElement.children, header);
+                    const currentOrder = header.dataset.order || 0;
+                    const order = (parseInt(currentOrder) + 1) % 3;
+                    header.dataset.order = order;
 
-                        if (order === 0) {
-                            tbody.innerHTML = '';
-                            originalRows.forEach(row => tbody.appendChild(row));
-                            headers.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
-                            return;
-                        }
+                    if (order === 0) {
+                        tbody.innerHTML = '';
+                        originalRows.forEach(row => tbody.appendChild(row));
+                        headers.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc', 'sorted'));
+                        return;
+                    }
 
-                        const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
 
-                        rows.sort((rowA, rowB) => {
-                            const cellA = rowA.children[index].innerText.toLowerCase();
-                            const cellB = rowB.children[index].innerText.toLowerCase();
+                    rows.sort((rowA, rowB) => {
+                        const cellA = rowA.children[index].innerText.toLowerCase();
+                        const cellB = rowB.children[index].innerText.toLowerCase();
 
-                            const cellANum = parseFloat(cellA);
-                            const cellBNum = parseFloat(cellB);
+                        const cellANum = parseFloat(cellA);
+                        const cellBNum = parseFloat(cellB);
 
-                            if (!isNaN(cellANum) && !isNaN(cellBNum)) {
-                                return (cellANum - cellBNum) * (order === 1 ? 1 : -1);
-                            } else {
-                                return cellA.localeCompare(cellB) * (order === 1 ? 1 : -1);
-                            }
-                        });
-
-                        rows.forEach(row => tbody.appendChild(row));
-
-                        // Remove existing sort indicators
-                        headers.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
-
-                        // Add sort indicator
-                        if (order === 1) {
-                            header.classList.add('sorted-asc');
-                        } else if (order === 2) {
-                            header.classList.add('sorted-desc');
+                        if (!isNaN(cellANum) && !isNaN(cellBNum)) {
+                            return (cellANum - cellBNum) * (order === 1 ? 1 : -1);
+                        } else {
+                            return cellA.localeCompare(cellB) * (order === 1 ? 1 : -1);
                         }
                     });
-                }
+
+                    rows.forEach(row => tbody.appendChild(row));
+
+                    // Remove existing sort indicators
+                    headers.forEach(th => th.classList.remove('sorted-asc', 'sorted-desc', 'sorted'));
+
+                    // Add sort indicator
+                    if (order === 1) {
+                        header.classList.add('sorted-asc', 'sorted');
+                    } else if (order === 2) {
+                        header.classList.add('sorted-desc', 'sorted');
+                    }
+                });
             });
         });
     </script>    
