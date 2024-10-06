@@ -1,4 +1,3 @@
-// routes/results.js
 const express = require('express');
 const router = express.Router();
 const { getNewsData } = require('../pulls');
@@ -12,7 +11,6 @@ router.post('/', async (req, res) => {
         return res.status(500).send("Error fetching news data");
     }
 
-    // Prepare graph data for Polarity
     const graphPolarity = {
         data: [
             {
@@ -26,7 +24,6 @@ router.post('/', async (req, res) => {
         }
     };
 
-    // Prepare graph data for AvgPolarityPerWord
     const graphAvgPolarityPerWord = {
         data: [
             {

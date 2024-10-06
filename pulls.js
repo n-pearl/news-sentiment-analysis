@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const sentiment = new Sentiment();
-const API_KEY = process.env.API_KEY; // Reference the API key from the environment variables
+const API_KEY = process.env.API_KEY;
 
 async function getNewsData(start_date, end_date, news_source, subject) {
     try {
@@ -18,17 +18,16 @@ async function getNewsData(start_date, end_date, news_source, subject) {
             language: 'en'
         };
 
-        console.log('Request parameters:', params); // Debug statement
+        console.log('Request parameters:', params);
 
         const response = await axios.get('https://newsapi.org/v2/everything', {
             params: params
         });
 
-        // Process response
         const articles = response.data.articles.map(article => {
             const result = sentiment.analyze(article.content || '');
             return {
-                date: new Date(article.publishedAt), // Ensure date is a Date object
+                date: new Date(article.publishedAt),
                 title: article.title,
                 polarity: result.score,
                 AvgPolarityPerWord: result.comparative
